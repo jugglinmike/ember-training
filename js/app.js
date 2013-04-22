@@ -5,7 +5,7 @@ window.App = Ember.Application.create();
 
 App.Router.map(function() {
   this.resource('album', {
-    path: 'album/:albumId'
+    path: 'album/:album_id'
   });
 });
 
@@ -20,7 +20,7 @@ App.IndexRoute = Ember.Route.extend({
 
 App.AlbumRoute = Ember.Route.extend({
   model: function(params) {
-    return App.ALBUM_FIXTURES.findProperty('id', params.albumId);
+    return App.ALBUM_FIXTURES.findProperty('id', params.album_id);
   }
 });
 
