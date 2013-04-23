@@ -16,9 +16,11 @@
   </head>
   <body>
     <script type="text/x-handlebars">
-      <header><h1>BümBöx</h1></header>
+      <header>{{#linkTo "index"}}<h1>BümBöx</h1>{{/linkTo}}</header>
 
       {{ outlet }}
+
+      {{ render "nowPlaying" }}
     </script>
 
     <script type="text/x-handlebars" data-template-name="index">
@@ -53,6 +55,7 @@
         <tr>
           <td class="song-track">
               <span class="track-number">{{ track }}</span>
+              <span class="play" {{action "play" this on="click"}}>▶</span>
           </td>
           <td class="song-name">{{ name }}</td>
           <td class="song-duration">{{ format-duration duration }}</td>
@@ -62,6 +65,31 @@
           <td class="total-duration" colspan="3">Total Time: {{ format-duration totalDuration }}</td>
         </tr>
       </table>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="nowPlaying">
+      {{#if model}}
+
+      <footer class="now-playing">
+        <img class="now-playing-artwork" {{ bindAttr src=album.artwork }}">
+        <div class="now-playing-body">
+          <p class="now-playing-details">
+            <span class="now-playing-name">{{ name }}</span> -
+            <span class="now-playing-artist">{{ album.artist }}</span>
+          </p>
+          <div class="now-playing-player">
+            <!-- You will fill this in later -->
+          </div>
+        </div>
+      </footer>
+
+      {{else}}
+
+      <footer class="now-playing">
+      <span class="now-playing-empty">Select a song to start playing.{{thing}}</span>
+      </footer>
+
+      {{/if}}
     </script>
 
     <div id="qunit" style="display: none"></div>
