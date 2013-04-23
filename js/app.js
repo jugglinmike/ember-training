@@ -23,6 +23,19 @@ App.AlbumRoute = Ember.Route.extend({
     return App.ALBUM_FIXTURES.findProperty('id', params.album_id);
   }
 });
+App.AlbumController = Ember.ObjectController.extend({
+  totalDuration: function() {
+    var duration = 0;
+    var songs = this.get('songs');
+    var idx, len;
+
+    for (idx = 0, len = songs.length; idx < len; ++idx) {
+      duration += songs[idx].duration;
+    }
+
+    return duration;
+  }.property('songs.@each.duration')
+});
 
 Ember.Handlebars.helper("format-duration", function(duration) {
   var seconds = duration % 60;
