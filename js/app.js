@@ -45,6 +45,13 @@ App.AlbumController = Ember.ObjectController.extend({
 App.NowPlayingController = Ember.ObjectController.extend({
 });
 
+App.AudioView = Ember.View.extend({
+  classNames: ['audio-control'],
+  templateName: 'audioControl'
+});
+
+Ember.Handlebars.helper('audio', App.AudioView);
+
 Ember.Handlebars.helper("format-duration", function(duration) {
   var seconds = duration % 60;
   var minutes = (duration-seconds) / 60;
