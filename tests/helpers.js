@@ -24,10 +24,8 @@ Ember._viewsInTest = [];
 function step(number, description) {
   module("Step " + number + ": " + description, {
     setup: function() {
-      Ember.run(function() {
-        location.hash = '';
-        App.reset();
-      });
+      location.hash = '';
+      App.reset();
     },
 
     teardown: function() {
@@ -140,7 +138,7 @@ function invokeHelper(helperName, parameter) {
 }
 
 function createController(controllerName) {
-  var container = App.buildContainer(App);
+  var container = App.__container__.child();
   return container.lookup('controller:' + controllerName);
 }
 
