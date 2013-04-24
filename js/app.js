@@ -47,22 +47,27 @@ App.NowPlayingController = Ember.ObjectController.extend({
 
 App.AudioView = Ember.View.extend({
   classNames: ['audio-control'],
-  src: function(attr, val) {
-    if (arguments.length == 2) {
-      this.$('audio').attr('src', val);
-      return val;
-    }
-    return $('audio').attr('src');
-  }.property(),
-  currentTime: function() {
-    return this.$('audio')[0].currentTime;
-  }.property(),
   templateName: 'audioControl',
+  play: function() {
+    this.$('audio')[0].play();
+
+    // TODO: Update tests to acknowledge that setting playback state is an
+    // asynchronous operation, then remove this line.
+    this.set('isPlaying', true);
+  },
+  pause: function() {
+    this.$('audio')[0].pause();
+
+    // TODO: Update tests to acknowledge that setting playback state is an
+    // asynchronous operation, then remove this line.
+    this.set('isPlaying', false);
+  },
   didInsertElement: function() {
     var view = this;
     var $audio = this.$('audio');
 
-    $audio.prop('autoplay', true);
+    $audio.prop('autoplay', true)
+      .attr('src', this.get('song.url'));
 
     $audio.on('canplaythrough', function() {
       view.set('isLoaded', true);
@@ -72,10 +77,20 @@ App.AudioView = Ember.View.extend({
       view.set('currentTime', Math.floor(this.currentTime));
     }).on('playing', function() {
       view.set('isPlaying', true);
-    }).on('paused', function() {
+    }).on('pause', function() {
       view.set('isPlaying', false);
     });
-  }
+  },
+  src: function(attr, val) {
+    if (arguments.length === 2) {
+      this.$('audio').attr('src', val);
+      return val;
+    }
+    return $('audio').attr('src');
+  }.property(),
+  currentTime: function() {
+    return this.$('audio')[0].currentTime;
+  }.property()
 });
 
 Ember.Handlebars.helper('audio', App.AudioView);

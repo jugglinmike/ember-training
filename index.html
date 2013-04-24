@@ -78,7 +78,7 @@
             <span class="now-playing-artist">{{ album.artist }}</span>
           </p>
           <div class="now-playing-player">
-            {{audio}}
+            {{audio song=model}}
           </div>
         </div>
       </footer>
@@ -94,6 +94,11 @@
 
     <script type="text/x-handlebars" data-template-name="audioControl">
       <audio></audio>
+      {{#if view.isPlaying}}
+      <button class="pause" {{action "pause" target=view on="click"}}>Pause</button>
+      {{else}}
+      <button class="play" {{action "play" target=view on="click"}}>Play</button>
+      {{/if}}
     </script>
 
     <div id="qunit" style="display: none"></div>
