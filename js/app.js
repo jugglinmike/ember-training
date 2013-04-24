@@ -1,6 +1,7 @@
 (function() {
 "use strict";
 
+var endpoint = 'http://ember-training.nodejitsu.com/';
 window.App = Ember.Application.create();
 
 App.Router.map(function() {
@@ -14,7 +15,42 @@ App.ApplicationRoute = Ember.Route.extend({
 
 App.IndexRoute = Ember.Route.extend({
   model: function() {
-    return App.ALBUM_FIXTURES;
+    // Create a deferred to track the status of the AJAX requests. This is
+    // necessary because jQuery deferreds do not chain properly with other
+    // deferred libraries (including RSVP)
+    var promise = new Ember.RSVP.Promise();
+    $.getJSON(endpoint + 'albums')
+      .then(function(albums) {
+        var albumReqs = albums.map(function(album) {
+          var songReqs = album.songs.map(function(songID) {
+            var songReq =  $.getJSON(endpoint + 'songs/' + songID);
+
+            songReq.then(function(song) {
+              song.album = album;
+            });
+
+            return songReq;
+          });
+
+          Ember.RSVP.all(songReqs).then(function(songs) {
+            songs.sort(function(a, b) {
+              return a.track > b.track;
+            });
+            album.songs = songs;
+          });
+
+          return Ember.RSVP.all(songReqs);
+        });
+
+        Ember.RSVP.all(albumReqs).then(promise.resolve.bind(promise, albums),
+          promise.reject.bind(promise));
+      }, promise.reject.bind(promise));
+
+    return promise.then(null, function(reason) {
+      console.error('Failed to load library information from network. ' +
+        'Using local data.');
+      return App.ALBUM_FIXTURES;
+    });
   }
 });
 
