@@ -47,7 +47,35 @@ App.NowPlayingController = Ember.ObjectController.extend({
 
 App.AudioView = Ember.View.extend({
   classNames: ['audio-control'],
-  templateName: 'audioControl'
+  src: function(attr, val) {
+    if (arguments.length == 2) {
+      this.$('audio').attr('src', val);
+      return val;
+    }
+    return $('audio').attr('src');
+  }.property(),
+  currentTime: function() {
+    return this.$('audio')[0].currentTime;
+  }.property(),
+  templateName: 'audioControl',
+  didInsertElement: function() {
+    var view = this;
+    var $audio = this.$('audio');
+
+    $audio.prop('autoplay', true);
+
+    $audio.on('canplaythrough', function() {
+      view.set('isLoaded', true);
+    }).on('loadedmetadata', function() {
+      view.set('duration', Math.floor(this.duration));
+    }).on('timeupdate', function() {
+      view.set('currentTime', Math.floor(this.currentTime));
+    }).on('playing', function() {
+      view.set('isPlaying', true);
+    }).on('paused', function() {
+      view.set('isPlaying', false);
+    });
+  }
 });
 
 Ember.Handlebars.helper('audio', App.AudioView);
